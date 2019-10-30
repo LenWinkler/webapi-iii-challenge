@@ -42,11 +42,22 @@ router.put('/:id', (req, res) => {
 //custom middleware
 
 function validateUserId(req, res, next) {
-
+    if(req.params.id) {
+        req.user = req.body;
+        next();
+    } else {
+        res.status(400).json({ message: "invalid user id" })
+    }
 };
 
 function validateUser(req, res, next) {
-
+    if(!req.body) {
+        res.status(400).json({ message: "Missing user data" })
+    } else if (!req.body.name) {
+        res.status(400).json({ message: "Missing required name field" })
+    } else {
+        next();
+    }
 };
 
 function validatePost(req, res, next) {
