@@ -15,7 +15,7 @@ router.post('/', validateUser, (req, res) => {
         })
 });
 
-router.post('/:id/posts', (req, res) => {
+router.post('/:id/posts', validateUserId, (req, res) => {
 
 });
 
@@ -30,8 +30,15 @@ router.get('/', (req, res) => {
         })
 });
 
-router.get('/:id', (req, res) => {
-
+router.get('/:id', validateUserId, (req, res) => {
+    Users.getById(req.user.id)
+        .then(response => {
+            res.status(200).json(response)
+        })
+        .catch(err => {
+            console.log('error retrieving user', err);
+            res.status(500).json({ errorMessage: "Error retrieving user" })
+        })
 });
 
 router.get('/:id/posts', (req, res) => {
@@ -49,12 +56,16 @@ router.put('/:id', (req, res) => {
 //custom middleware
 
 function validateUserId(req, res, next) {
-    if(req.params.id) {
-        req.user = req.body;
-        next();
-    } else {
-        res.status(400).json({ message: "invalid user id" })
-    }
+    Users.getById(req.params.id)
+        .then(response => {
+            if(response) {
+                console.log(response);
+                req.user = response;
+                next();
+            } else {
+                res.status(400).json({ message: "invalid user id" })
+        }
+    })
 };
 
 function validateUser(req, res, next) {
