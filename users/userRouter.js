@@ -42,7 +42,6 @@ router.get('/:id', validateUserId, (req, res) => {
 });
 
 router.get('/:id/posts', validateUserId, (req, res) => {
-    if(req.user) {
         Users.getUserPosts(req.params.id)
             .then(response => {
                 res.status(200).json(response)
@@ -51,11 +50,9 @@ router.get('/:id/posts', validateUserId, (req, res) => {
                 console.log('get user posts error', err);
                 res.status(500).json({ errorMessage: "Error retrieving user's posts" })
             })
-    }
 });
 
 router.delete('/:id', validateUserId, (req, res) => {
-    if(req.user) {
         Users.remove(req.params.id)
             .then(response => {
                 res.status(200).json({ message: "User deleted successfully" })
@@ -64,11 +61,17 @@ router.delete('/:id', validateUserId, (req, res) => {
                 console.log('delete user error', err);
                 res.status(500).json({ errorMessage: "Unable to delete user" })
             })
-    }
 });
 
-router.put('/:id', (req, res) => {
-
+router.put('/:id', validateUserId, (req, res) => {
+   Users.update(req.params.id, req.body)
+    .then(response => {
+        res.status(200).json({ message: "User updated successfully" })
+    })
+    .catch(err => {
+        console.log('update user error', err);
+        res.status(500).json({ errorMessage: "Unable to update user information" })
+    })
 });
 
 //custom middleware
