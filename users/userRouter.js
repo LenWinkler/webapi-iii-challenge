@@ -41,8 +41,17 @@ router.get('/:id', validateUserId, (req, res) => {
         })
 });
 
-router.get('/:id/posts', (req, res) => {
-
+router.get('/:id/posts', validateUserId, (req, res) => {
+    if(req.user) {
+        Users.getUserPosts(req.params.id)
+            .then(response => {
+                res.status(200).json(response)
+            })
+            .catch(err => {
+                console.log('get user posts error', err);
+                res.status(500).json({ errorMessage: "Error retrieving user's posts" })
+            })
+    }
 });
 
 router.delete('/:id', (req, res) => {
