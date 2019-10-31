@@ -4,8 +4,15 @@ const Users = require('./userDb')
 
 const router = require('express').Router();
 
-router.post('/', (req, res) => {
-
+router.post('/', validateUser, (req, res) => {
+    Users.insert(req.body)
+        .then(response => {
+            res.status(200).json(response)
+        })
+        .catch(err => {
+            console.log('add user error', err);
+            res.status(500).json({ errorMessage: "Unable to add user to database" })
+        })
 });
 
 router.post('/:id/posts', (req, res) => {
