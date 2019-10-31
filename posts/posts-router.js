@@ -36,8 +36,15 @@ router.delete('/:id', validatePostId, (req, res) => {
         })
 });
 
-router.put('/:id', (req, res) => {
-
+router.put('/:id', validatePostId, (req, res) => {
+    Posts.update(req.params.id, req.body)
+        .then(response => {
+            res.status(200).json({ message: "Post updated successfully"})
+        })
+        .catch(err => {
+            console.log('error updating post', err);
+            res.status(500).json({ errorMessage: "Unable to update post" })
+        })
 });
 
 // custom middleware
